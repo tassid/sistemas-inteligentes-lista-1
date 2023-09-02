@@ -1,7 +1,7 @@
 from collections import deque
+import time
 
-# Definindo a estrutura da árvore como um dicionário
-# A chave é o nó e o valor é uma lista de seus filhos
+# Árvore no formato de dicionário
 tree = {
     1: [2, 3, 4],
     2: [5, 6],
@@ -27,48 +27,106 @@ tree = {
     22: []
 }
 
-# Busca em Largura (BFS)
-def bfs(tree, start, target):
+def bfs(tree, start, targets):
     visited = set()
-    queue = deque([start])
+    queue = deque([(start, [])])
+    nodes_visited = 0
+    nodes_expanded = 0
 
     while queue:
-        node = queue.popleft()
-        if node == target:
-            return True
-        if node not in visited:
-            visited.add(node)
-            queue.extend(child for child in tree[node] if child not in visited)
+        node, path = queue.popleft()
+        visited.add(node)
+        nodes_visited += 1
 
-    return False
+        if node in targets:
+            print(f"Nós visitados durante a BFS: {nodes_visited}")
+            print(f"Nós expandidos durante a BFS: {nodes_expanded}")
+            print(f"Caminho encontrado para o nó {node}: {path + [node]}")
+            targets.remove(node)
 
-# Busca em Profundidade (DFS)
-def dfs(tree, current, target, visited=None):
+        for neighbor in tree.get(node, []):
+            if neighbor not in visited and neighbor not in [n[0] for n in queue]:
+                queue.append((neighbor, path + [node]))
+                nodes_expanded += 1
+
+        # Medir o uso de memória após cada iteração
+        memory_usage = get_memory_usage()
+        print(f"Uso de memória durante a BFS: {memory_usage:.2f} MB")
+
+def dfs(tree, node, target, visited=None, path=None):
     if visited is None:
         visited = set()
+    if path is None:
+        path = []
 
-    if current == target:
+    visited.add(node)
+    nodes_visited = 1
+
+    if node == target:
+        print(f"Nós visitados durante a DFS: {nodes_visited}")
+        print(f"Caminho encontrado para o nó {node}: {path + [node]}")
         return True
 
-    visited.add(current)
-
-    for neighbor in tree[current]:
+    for neighbor in tree.get(node, []):
         if neighbor not in visited:
-            if dfs(tree, neighbor, target, visited):
+            nodes_visited += 1
+            if dfs(tree, neighbor, target, visited, path + [node]):
+                print(f"Nós visitados durante a DFS: {nodes_visited}")
                 return True
 
-    return False
+        # Medir o uso de memória após cada iteração
+        memory_usage = get_memory_usage()
+        print(f"Uso de memória durante a DFS: {memory_usage:.2f} MB")
 
-# Encontrar nós 10 e 20 usando BFS
-result_bfs = bfs(tree, 1, 10)
-print("BFS - Nó 10 encontrado:", result_bfs)
+def get_memory_usage():
+    import psutil
+    process = psutil.Process()
+    memory_usage = process.memory_info().rss / (1024 * 1024)  # Em megabytes
+    return memory_usage
 
-result_bfs = bfs(tree, 1, 20)
-print("BFS - Nó 20 encontrado:", result_bfs)
+# Medir o tempo de execução e uso de memória em cada execução BFS e DFS
+start_time = time.time()
 
-# Encontrar nós 10 e 20 usando DFS
-result_dfs = dfs(tree, 1, 10)
-print("DFS - Nó 10 encontrado:", result_dfs)
+# Encontrar o nó 10 usando BFS
+print("Busca em Largura (BFS) para encontrar o nó 10:")
+bfs(tree, 1, [10])
 
-result_dfs = dfs(tree, 1, 20)
-print("DFS - Nó 20 encontrado:", result_dfs)
+end_time = time.time()
+execution_time = end_time - start_time
+print(f"Tempo de execução da BFS para encontrar o nó 10: {execution_time} segundos")
+
+print("\n------------------------------------------\n")
+
+start_time = time.time()
+
+# Encontrar o nó 20 usando BFS
+print("Busca em Largura (BFS) para encontrar o nó 20:")
+bfs(tree, 1, [20])
+
+end_time = time.time()
+execution_time = end_time - start_time
+print(f"Tempo de execução da BFS para encontrar o nó 20: {execution_time} segundos")
+
+print("\n------------------------------------------\n")
+
+start_time = time.time()
+
+# Encontrar o nó 10 usando DFS
+print("Busca em Profundidade (DFS) para encontrar o nó 10:")
+dfs(tree, 1, 10)
+
+end_time = time.time()
+execution_time = end_time - start_time
+print(f"Tempo de execução da DFS para encontrar o nó 10: {execution_time} segundos")
+
+print("\n------------------------------------------\n")
+
+start_time = time.time()
+
+# Encontrar o nó 20 usando DFS
+print("Busca em Profundidade (DFS) para encontrar o nó 20:")
+dfs(tree, 1, 20)
+
+end_time = time.time()
+execution_time = end_time - start_time
+print(f"Tempo de execução da DFS para encontrar o nó 20: {execution_time} segundos")
