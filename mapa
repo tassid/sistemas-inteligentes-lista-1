@@ -1,0 +1,17 @@
+digraph {
+	Home
+	Museum
+	Park
+	Lake
+	School
+	Home -> Museum [label="2.7 km"]
+	Home -> Club [label="1.2 km"]
+	Home -> Bank [label="1.3 km"]
+	Museum -> Park [label="1.6 km"]
+	Museum -> Bank [label="1.7 km"]
+	Park -> Lake [label="1.6 km"]
+	Park -> Bank [label="1.8 km"]
+	Lake -> School [label="0.9 km"]
+	School -> Club [label="1.4 km"]
+	School -> Bank [label="1 km"]
+}
