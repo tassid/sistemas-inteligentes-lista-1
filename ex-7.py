@@ -1,4 +1,5 @@
 from collections import deque
+import time
 
 def busca_largura(mapa, inicio, destino):
     fila = deque()
@@ -61,39 +62,35 @@ mapa = {
 inicio = 'School'
 destino = 'Museum'
 
-# Busca em Largura
+# Medir o tempo de execução da Busca em Largura
+tempo_inicio = time.time()
 caminho_largura = busca_largura(mapa, inicio, destino)
+tempo_fim = time.time()
+tempo_busca_largura = tempo_fim - tempo_inicio
 
-# Busca em Profundidade
+# Medir o tempo de execução da Busca em Profundidade
+tempo_inicio = time.time()
 caminho_profundidade = busca_profundidade(mapa, inicio, destino)
+tempo_fim = time.time()
+tempo_busca_profundidade = tempo_fim - tempo_inicio
 
-# Busca em Profundidade Iterativa (com limite de 4)
+# Medir o tempo de execução da Busca em Profundidade Iterativa
+tempo_inicio = time.time()
 caminho_profundidade_iterativa = busca_profundidade_iterativa(mapa, inicio, destino, limite=4)
-
-# Avaliar qual algoritmo encontrou o caminho mais curto
-distancia_largura = sum(mapa[caminho_largura[i]][caminho_largura[i+1]] for i in range(len(caminho_largura)-1)) if caminho_largura else float('inf')
-distancia_profundidade = sum(mapa[caminho_profundidade[i]][caminho_profundidade[i+1]] for i in range(len(caminho_profundidade)-1)) if caminho_profundidade else float('inf')
-distancia_profundidade_iterativa = sum(mapa[caminho_profundidade_iterativa[i]][caminho_profundidade_iterativa[i+1]] for i in range(len(caminho_profundidade_iterativa)-1)) if caminho_profundidade_iterativa else float('inf')
+tempo_fim = time.time()
+tempo_busca_profundidade_iterativa = tempo_fim - tempo_inicio
 
 # Imprimir resultados
-print(f"Caminho encontrado pela Busca em Largura: {caminho_largura}, Distância: {distancia_largura} km")
-print(f"Caminho encontrado pela Busca em Profundidade: {caminho_profundidade}, Distância: {distancia_profundidade} km")
-print(f"Caminho encontrado pela Busca em Profundidade Iterativa: {caminho_profundidade_iterativa}, Distância: {distancia_profundidade_iterativa} km")
+print(f"Tempo de execução da Busca em Largura: {tempo_busca_largura} segundos")
+print(f"Tempo de execução da Busca em Profundidade: {tempo_busca_profundidade} segundos")
+print(f"Tempo de execução da Busca em Profundidade Iterativa: {tempo_busca_profundidade_iterativa} segundos")
 
-# Determinar o melhor algoritmo
-melhor_algoritmo = None
-menor_distancia = float('inf')
+# Determinar o algoritmo mais rápido
+tempos = {
+    "Busca em Largura": tempo_busca_largura,
+    "Busca em Profundidade": tempo_busca_profundidade,
+    "Busca em Profundidade Iterativa": tempo_busca_profundidade_iterativa
+}
 
-if caminho_largura and distancia_largura < menor_distancia:
-    melhor_algoritmo = "Busca em Largura"
-    menor_distancia = distancia_largura
-
-if caminho_profundidade and distancia_profundidade < menor_distancia:
-    melhor_algoritmo = "Busca em Profundidade"
-    menor_distancia = distancia_profundidade
-
-if caminho_profundidade_iterativa and distancia_profundidade_iterativa < menor_distancia:
-    melhor_algoritmo = "Busca em Profundidade Iterativa"
-    menor_distancia = distancia_profundidade_iterativa
-
-print(f"Melhor algoritmo: {melhor_algoritmo}")
+algoritmo_mais_rapido = min(tempos, key=tempos.get)
+print(f"O algoritmo mais rápido foi: {algoritmo_mais_rapido}")
